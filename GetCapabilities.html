@@ -1,0 +1,71 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+        integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+        crossorigin=""></script>
+    </head>	
+    <body>	
+        <div style="width:100%; height:100%" id="map"></div>
+        <script>
+            // parser function: load GetCapabilities XML from given URL
+            function parseGetCapabilitiesXML(getCapabilitiesURL, layerName, callback) {
+                var xhr = new XMLHttpRequest();
+                    xhr.open("GET", getCapabilitiesURL);
+                    xhr.onload = function() {
+                        var getCapabilitiesXML = xhr.responseXML;
+                        getServiceURLTemplates(getCapabilitiesXML, layerName, callback);
+                    };
+                xhr.send();
+            };
+
+            // XMLHttpRequest.onload function: extract <Style>, <TileMatrixSet> and <ressourceURL> values from parsed GetCapabilities XML
+            function getServiceURLTemplates(getCapabilitiesXML, layerName, callback) {
+                var layerNodes = getCapabilitiesXML.getElementsByTagName("Layer");
+
+                for (var i = 0; i < layerNodes.length; i++) {
+
+                    var title = layerNodes[i].getElementsByTagName("ows:Title")[0].childNodes[0].nodeValue;
+
+                    if (title == layerName) {
+                        var style = layerNodes[i].getElementsByTagName("Style")[0].children[0].childNodes[0].nodeValue;
+                        var tileMatrixSet = layerNodes[i].getElementsByTagName("TileMatrixSetLink")[0].children[0].childNodes[0].nodeValue;   
+                        var serviceURLTemplates = layerNodes[i].getElementsByTagName("ResourceURL")[4].attributes.getNamedItem("template").nodeValue;
+                        callback(serviceURLTemplates, tileMatrixSet, style, layerName);
+                    };
+
+                };
+
+            };
+
+            // callback function: create Leaflet tileLayer when ready and add to map
+            function createLeafletLayer(serviceURLTemplates, tileMatrixSet, style, layerName) {
+                var sharding = ["maps", "maps1", "maps2", "maps3", "maps4"];
+                var baseURL = serviceURLTemplates.replace("maps", "{s}")
+                                            .replace("{Style}", style)
+                                            .replace("{TileMatrixSet}", tileMatrixSet)
+                                            .replace("{TileMatrix}", "{z}")
+                                            .replace("{TileRow}", "{y}")
+                                            .replace("{TileCol}", "{x}");
+
+                var WMTSLayer = L.tileLayer(baseURL, {
+                    id: layerName,
+                    subdomains: sharding
+                });
+                WMTSLayer.addTo(map);
+            };
+
+            // setup map
+            var getCapabilitiesURL = "https://www.basemap.at/wmts/1.0.0/WMTSCapabilities.xml";
+            var layerName = "Geoland Basemap";
+
+            var map = L.map('map').setView([47.579271, 14.636060], 8);
+
+            // add WMTS Layer
+            parseGetCapabilitiesXML(getCapabilitiesURL, layerName, createLeafletLayer);
+        </script>
+    </body> 
+</html>
+ 
