@@ -1,0 +1,29 @@
+<Datos xmlns="http://bdca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <Datos_Horario>
+        <provincia>28</provincia>
+        <municipio>079</municipio>
+        <estacion>102</estacion>
+        <nombre_estacion>Cerro</nombre_estacion>
+        <magnitud>81</magnitud>
+        <punto_muestreo>
+            <coordenadas_UTM>
+                <x>452.789</x>
+                <y>4458.962</y>
+            </coordenadas_UTM>
+        </punto_muestreo>
+        <horario>
+            <ano>2006</ano>
+            <mes>07</mes>
+            <dia>07</dia>
+            <hora>08</hora>
+            <minutos>00</minutos>
+            <segundos>00</segundos>
+        </horario>
+    </Datos_Horario>
+    <Datos_Climatologicos>
+        <temperatura>21grados</temperatura>
+        <humedad>87%</humedad>
+        <direccion_viento>SO</direccion_viento>
+        <velocidad_viento>6km/h</velocidad_viento>
+    </Datos_Climatologicos>
+</Datos>

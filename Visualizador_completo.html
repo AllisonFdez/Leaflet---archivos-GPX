@@ -58,7 +58,7 @@
         
         <div style="width:100%; height:100%" id="map"></div>
         <script>
-            var map = L.map('map',{crs: L.CRS.EPSG4326}).setView([40, -2.5], 7);
+            var map = L.map('map',{crs: L.CRS.EPSG4326, mapTypeId: 'topo'}).setView([40, -2.5], 7);
             
             //Minimap
             var osm2 = new L.TileLayer('http://a.tile.openstreetmap.org/{z}/{x}/{y}.png', {minZoom: 0, maxZoom: 13});
@@ -126,6 +126,78 @@
                     medirDistancia();
                 }
             })
+
+            var elevation_options = {
+
+                // Default chart colors: theme lime-theme, magenta-theme, ...
+                theme: "lightblue-theme",
+
+                // Chart container outside/inside map container
+                detached: true,
+
+                // if (detached), the elevation chart container
+                elevationDiv: "#elevation-div",
+
+                // if (!detached) autohide chart profile on chart mouseleave
+                autohide: false,
+
+                // if (!detached) initial state of chart profile control
+                collapsed: false,
+
+                // if (!detached) control position on one of map corners
+                position: "topright",
+
+                // Autoupdate map center on chart mouseover.
+                followMarker: true,
+
+                // Chart distance/elevation units.
+                imperial: false,
+
+                // [Lat, Long] vs [Long, Lat] points. (leaflet default: [Lat, Long])
+                reverseCoords: false,
+
+                // Acceleration chart profile: true || "summary" || "disabled" || false
+                acceleration: false,
+
+                // Slope chart profile: true || "summary" || "disabled" || false
+                slope: false,
+
+                // speed chart profile: true || "summary" || "disabled" || false
+                speed: false,
+
+                // Time stamp labels.
+                time: false,
+
+                // Summary track info style: "line" || "multiline" || false
+                summary: 'multiline',
+
+                // Toggle chart ruler filter.
+                ruler: true,
+
+                // Toggle chart legend filter.
+                legend: true,
+
+            };
+
+            // Instancia del control de elevación.
+            var controlElevation = L.control.elevation(elevation_options).addTo(map);
+            
+            // Ruta del archivo con los datos.("*.geojson", "*.gpx")
+            var gpx = "http://localhost:8080/6-12-GR-202-Ruta_de_la_Reconquista.gpx"
+
+            // Añadir los marcadores a la ruta con gpx.
+            var gpxRuta = new L.GPX(gpx, {
+                async: true,
+                marker_options: {
+                    startIconUrl: './images/marker-location.png',
+                    endIconUrl: './images/marker-location.png'
+                }
+            }).on('loaded', function(e) {
+                map.fitBounds(e.target.getBounds());
+            }).addTo(map)
+
+            controlElevation.load(gpx);
+
         </script>
     </body>
 </html>
