@@ -1,3 +1,4 @@
+<!-- Ejemplo de un archivo XML con datos requeridos. -->
 <Datos xmlns="http://bdca" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <Datos_Horario>
         <provincia>28</provincia>
